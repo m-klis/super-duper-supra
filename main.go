@@ -1,5 +1,12 @@
 package main
 
+import (
+	"noteapp/config"
+)
+
 func main() {
-	fmt
+	// setup config
+	configuration := config.New()
+	db := config.NewDatabase(configuration)
+	// fmt.Println(db)
 }
