@@ -8,6 +8,8 @@ Trial Note App, Go-Chi, SQLX.
 make migrateup
 ```
 
+TEST
+
 # reference
 
 Architecture :
