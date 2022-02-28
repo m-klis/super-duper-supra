@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"noteapp/entity"
 	"noteapp/exception"
 	"noteapp/repository/sqlhelper"
@@ -36,7 +37,10 @@ func (repo *noteRepositoryImpl) FindNotes(ctx context.Context, db *sqlx.DB) ([]e
 	var notes []entity.Note
 
 	err := db.SelectContext(ctx, &notes, sqlhelper.FindAll)
-	exception.PanicIfNeeded(err)
+	if err != nil {
+		return []entity.Note{}, errors.New("failed take data")
+	}
+	// exception.PanicIfNeeded(err)
 
 	return notes, nil
 }
@@ -45,7 +49,10 @@ func (repo *noteRepositoryImpl) FindNote(ctx context.Context, db *sqlx.DB, noteI
 	var note entity.Note
 
 	err := db.GetContext(ctx, &note, sqlhelper.FindOne+string(noteId))
-	exception.PanicIfNeeded(err)
+	if err != nil {
+		return entity.Note{}, errors.New("failed take data")
+	}
+	// exception.PanicIfNeeded(err)
 
 	return note, nil
 }
