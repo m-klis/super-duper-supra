@@ -6,6 +6,7 @@ import (
 	"noteapp/entity"
 	"noteapp/exception"
 	"noteapp/repository/sqlhelper"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -21,11 +22,17 @@ func (repo *noteRepositoryImpl) CreateNote(ctx context.Context, db *sqlx.DB, not
 	stmt, err := db.PrepareNamedContext(ctx, sqlhelper.CreateNote)
 	exception.PanicIfNeeded(err)
 
-	var id int
+	var id = entity.Note{
+		ID:        0,
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
+	}
 	err = stmt.Get(&id, note)
 	exception.PanicIfNeeded(err)
 
-	note.ID = id
+	note.ID = id.ID
+	note.CreatedAt = id.CreatedAt
+	note.UpdatedAt = id.UpdatedAt
 
 	// _, err := db.NamedExecContext(ctx, sqlhelper.CreateNote, note)
 	// exception.PanicIfNeeded(err)

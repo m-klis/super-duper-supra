@@ -25,15 +25,23 @@ func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) 
 	decoder := json.NewDecoder(r.Body)
 	noteCreateRequest := model.NoteCreateRequest{}
 	err := decoder.Decode(&noteCreateRequest)
-	exception.PanicIfNeeded(err)
+	// exception.PanicIfNeeded(err)
+	var webResponse model.WebResponse
+	if err != nil {
+		webResponse = model.WebResponse{
+			Code:   http.StatusNotAcceptable,
+			Status: "failed",
+			Data:   nil,
+		}
+	} else {
+		noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
+		exception.PanicIfNeeded(err)
 
-	noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
-	exception.PanicIfNeeded(err)
-
-	webResponse := model.WebResponse{
-		Code:   http.StatusOK,
-		Status: "OK",
-		Data:   noteResponse,
+		webResponse = model.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   noteResponse,
+		}
 	}
 
 	w.Header().Add("Content-Type", "application/json")
