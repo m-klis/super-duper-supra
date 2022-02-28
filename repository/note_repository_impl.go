@@ -17,8 +17,17 @@ func NewNoteRepository() NoteRepository {
 }
 
 func (repo *noteRepositoryImpl) CreateNote(ctx context.Context, db *sqlx.DB, note entity.Note) (entity.Note, error) {
-	_, err := db.NamedExecContext(ctx, sqlhelper.CreateNote, note)
+	stmt, err := db.PrepareNamedContext(ctx, sqlhelper.CreateNote)
 	exception.PanicIfNeeded(err)
+
+	var id int
+	err = stmt.Get(&id, note)
+	exception.PanicIfNeeded(err)
+
+	note.ID = id
+
+	// _, err := db.NamedExecContext(ctx, sqlhelper.CreateNote, note)
+	// exception.PanicIfNeeded(err)
 
 	return note, nil
 }
