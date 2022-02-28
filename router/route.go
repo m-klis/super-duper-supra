@@ -9,7 +9,12 @@ import (
 func NoteRouter(noteController controller.NoteController) *chi.Mux {
 	router := chi.NewMux()
 
-	router.Get("/note", noteController.FindAll)
+	router.Route("/note", func(r chi.Router) {
+		r.Get("/", noteController.FindNotes)
+		r.Route("/{noteid}", func(r chi.Router) {
+			r.Get("/", noteController.FindNote)
+		})
+	})
 
 	return router
 }

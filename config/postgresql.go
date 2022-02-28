@@ -2,7 +2,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"noteapp/exception"
 	"time"
 
@@ -17,7 +16,7 @@ func NewPostgresDatabase(c Config) *sqlx.DB {
 		" password=" + c.Get("POSTGRES_PASS") +
 		" dbname=" + c.Get("POSTGRES_DB") +
 		" sslmode=disable"
-	fmt.Println(dsn)
+	// fmt.Println(dsn)
 	db, err := sqlx.Connect("postgres", dsn)
 	exception.PanicIfNeeded(err)
 	// defer db.Close()

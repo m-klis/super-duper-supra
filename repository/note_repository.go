@@ -8,5 +8,6 @@ import (
 )
 
 type NoteRepository interface {
-	FindAll(context.Context, *sqlx.DB) []entity.Note
+	FindNotes(context.Context, *sqlx.DB) ([]entity.Note, error)
+	FindNote(context.Context, *sqlx.DB, string) (entity.Note, error)
 }

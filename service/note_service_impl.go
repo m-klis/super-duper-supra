@@ -23,10 +23,13 @@ func NewNoteService(noteRepo repository.NoteRepository, DB *sqlx.DB, validate *v
 	} // here is the magic
 }
 
-func (s *NoteServiceImpl) FindAll(ctx context.Context) []model.NoteResponse {
+func (s *NoteServiceImpl) FindNotes(ctx context.Context) ([]model.NoteResponse, error) {
 	db := s.DB
 
-	notes := s.NoteRepository.FindAll(ctx, db)
+	notes, err := s.NoteRepository.FindNotes(ctx, db)
+	if err != nil {
+		return []model.NoteResponse{}, err
+	}
 
 	var noteResponses []model.NoteResponse
 	for _, note := range notes {
@@ -41,5 +44,25 @@ func (s *NoteServiceImpl) FindAll(ctx context.Context) []model.NoteResponse {
 		noteResponses = append(noteResponses, res)
 	}
 
-	return noteResponses
+	return noteResponses, nil
+}
+
+func (s *NoteServiceImpl) FindNote(ctx context.Context, noteId string) (model.NoteResponse, error) {
+	db := s.DB
+
+	notes, err := s.NoteRepository.FindNote(ctx, db, noteId)
+	if err != nil {
+		return model.NoteResponse{}, err
+	}
+
+	res := model.NoteResponse{
+		ID:          notes.ID,
+		Title:       notes.Title,
+		Description: notes.Description,
+		Check:       notes.Check,
+		CreatedAt:   notes.CreatedAt,
+		UpdatedAt:   notes.UpdatedAt,
+	}
+
+	return res, nil
 }

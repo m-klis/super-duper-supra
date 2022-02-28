@@ -6,5 +6,6 @@ import (
 )
 
 type NoteService interface {
-	FindAll(context.Context) []model.NoteResponse
+	FindNotes(context.Context) ([]model.NoteResponse, error)
+	FindNote(context.Context, string) (model.NoteResponse, error)
 }
