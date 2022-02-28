@@ -20,7 +20,7 @@ func NewNoteService(noteRepo repository.NoteRepository, DB *sqlx.DB, validate *v
 		NoteRepository: noteRepo,
 		DB:             DB,
 		Validate:       validate,
-	}
+	} // here is the magic
 }
 
 func (s *NoteServiceImpl) FindAll(ctx context.Context) []model.NoteResponse {

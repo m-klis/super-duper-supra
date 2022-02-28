@@ -20,6 +20,7 @@ func NewNoteController(noteService service.NoteService) NoteController {
 
 func (c *NoteControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
 	noteResponses := c.NoteService.FindAll(r.Context())
+	// if
 	webResponse := model.WebResponse{
 		Code:   200,
 		Status: "OK",

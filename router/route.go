@@ -3,7 +3,7 @@ package router
 import (
 	"noteapp/controller"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi"
 )
 
 func NoteRouter(noteController controller.NoteController) *chi.Mux {
