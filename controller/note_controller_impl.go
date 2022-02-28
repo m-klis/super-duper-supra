@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"noteapp/exception"
 	"noteapp/model"
@@ -20,6 +19,27 @@ func NewNoteController(noteService service.NoteService) NoteController {
 	return &NoteControllerImpl{
 		NoteService: noteService,
 	}
+}
+
+func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	noteCreateRequest := model.NoteCreateRequest{}
+	err := decoder.Decode(&noteCreateRequest)
+	exception.PanicIfNeeded(err)
+
+	noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
+	exception.PanicIfNeeded(err)
+
+	webResponse := model.WebResponse{
+		Code:   http.StatusOK,
+		Status: "OK",
+		Data:   noteResponse,
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(webResponse)
+	exception.PanicIfNeeded(err)
 }
 
 func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
@@ -39,8 +59,6 @@ func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 
 func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 	noteId := chi.URLParam(r, "noteid")
-	fmt.Println(noteId)
-	fmt.Println("Cek Atas")
 	if noteId == "" {
 		exception.PanicIfNeeded(errors.New("noteId nil"))
 	}
