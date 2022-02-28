@@ -23,7 +23,7 @@ func NewNoteController(noteService service.NoteService) NoteController {
 }
 
 func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
-	noteResponses, err := c.NoteService.FindNotes(r.Context())
+	noteResponses, _ := c.NoteService.FindNotes(r.Context())
 
 	webResponse := model.WebResponse{
 		Code:   http.StatusOK,
@@ -33,7 +33,7 @@ func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
+	err := encoder.Encode(webResponse)
 	exception.PanicIfNeeded(err)
 }
 
