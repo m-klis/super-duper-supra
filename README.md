@@ -3,6 +3,7 @@
 Trial Note App, Go-Chi, SQLX.
 
 # Use it migrate
+
 Change username & password first in "Makefile", then do this below.
 
 For create table
@@ -11,15 +12,11 @@ For create table
 make migrateup
 ```
 
-<<<<<<< HEAD
-TEST
-=======
 For delete table
 
 ```
 make migratedown
 ```
->>>>>>> main
 
 # reference
 
