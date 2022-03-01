@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"noteapp/config"
 	"noteapp/controller"
@@ -35,6 +36,7 @@ func main() {
 		Handler: router,
 	}
 
+	fmt.Println("server started at localhost:3000")
 	err := server.ListenAndServe()
 	exception.PanicIfNeeded(err)
 }
