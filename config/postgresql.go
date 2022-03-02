@@ -19,7 +19,7 @@ func NewPostgresDatabase(c Config) *sqlx.DB {
 	// fmt.Println(dsn)
 	db, err := sqlx.Connect("postgres", dsn)
 	exception.PanicIfNeeded(err)
-	// defer db.Close()
+	defer db.Close()
 	return db
 }
 

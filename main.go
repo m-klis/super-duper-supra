@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"noteapp/config"
 	"noteapp/controller"
@@ -25,18 +25,7 @@ func main() {
 
 	router := router.NoteRouter(noteController)
 
-	// app := chi.NewRouter()
-	// app.Use(middleware.Logger)
-	// app.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Write(([]byte("Hello super duper supra")))
-	// })
-
-	server := http.Server{
-		Addr:    "localhost:3000",
-		Handler: router,
-	}
-
-	fmt.Println("server started at localhost:3000")
-	err := server.ListenAndServe()
+	log.Print("we're up and running")
+	err := http.ListenAndServe(":8080", router)
 	exception.PanicIfNeeded(err)
 }
