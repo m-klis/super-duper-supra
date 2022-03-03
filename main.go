@@ -1,14 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"noteapp/config"
 	"noteapp/controller"
-	"noteapp/exception"
 	"noteapp/repository"
-	"noteapp/router"
+	route "noteapp/router"
 	"noteapp/service"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -23,9 +26,22 @@ func main() {
 	noteService := service.NewNoteService(noteRepository, db, validate)
 	noteController := controller.NewNoteController(noteService)
 
-	router := router.NoteRouter(noteController)
+	router := route.NoteRouter(noteController)
 
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
+	go func() {
+		err := server.ListenAndServe()
+		log.Print(err)
+	}()
+
+	defer route.Stop(server)
 	log.Print("we're up and running")
-	err := http.ListenAndServe(":8080", router)
-	exception.PanicIfNeeded(err)
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+	log.Println(fmt.Sprint(<-ch), "in server")
+	log.Println("Stopping API Server")
 }

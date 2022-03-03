@@ -5,3 +5,9 @@ func PanicIfNeeded(err interface{}) {
 		panic(err)
 	}
 }
+
+func CheckErrorRespponse(err error) {
+	if err != nil {
+
+	}
+}
