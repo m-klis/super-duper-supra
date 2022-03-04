@@ -1,13 +1,15 @@
 package exception
 
+import "log"
+
 func PanicIfNeeded(err interface{}) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func CheckErrorRespponse(err error) {
+func CheckError(err error) {
 	if err != nil {
-
+		log.Fatal(err)
 	}
 }

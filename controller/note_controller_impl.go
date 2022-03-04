@@ -21,35 +21,6 @@ func NewNoteController(noteService service.NoteService) NoteController {
 	}
 }
 
-func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	noteCreateRequest := model.NoteCreateRequest{}
-	err := decoder.Decode(&noteCreateRequest)
-	// exception.PanicIfNeeded(err)
-	var webResponse model.WebResponse
-	if err != nil {
-		webResponse = model.WebResponse{
-			Code:   http.StatusNotAcceptable,
-			Status: "failed",
-			Data:   nil,
-		}
-	} else {
-		noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
-		exception.PanicIfNeeded(err)
-
-		webResponse = model.WebResponse{
-			Code:   http.StatusOK,
-			Status: "OK",
-			Data:   noteResponse,
-		}
-	}
-
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
-	exception.PanicIfNeeded(err)
-}
-
 func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 	noteResponses, _ := c.NoteService.FindNotes(r.Context())
 
@@ -83,6 +54,35 @@ func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 			Code:   http.StatusOK,
 			Status: "OK",
 			Data:   res,
+		}
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(webResponse)
+	exception.PanicIfNeeded(err)
+}
+
+func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	noteCreateRequest := model.NoteCreateRequest{}
+	err := decoder.Decode(&noteCreateRequest)
+	exception.CheckError(err)
+	var webResponse model.WebResponse
+	if err != nil {
+		webResponse = model.WebResponse{
+			Code:   http.StatusNotAcceptable,
+			Status: "failed",
+			Data:   nil,
+		}
+	} else {
+		noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
+		exception.PanicIfNeeded(err)
+
+		webResponse = model.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   noteResponse,
 		}
 	}
 
