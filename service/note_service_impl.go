@@ -25,35 +25,6 @@ func NewNoteService(noteRepo repository.NoteRepository, DB *sqlx.DB, validate *v
 	} // here is the magic
 }
 
-func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRequest) (model.NoteResponse, error) {
-	db := s.DB
-
-	err := s.Validate.Struct(req)
-	exception.PanicIfNeeded(err)
-
-	noteReq := entity.Note{
-		Title:       req.Title,
-		Description: req.Description,
-		Check:       req.Check,
-	}
-
-	note, err := s.NoteRepository.CreateNote(ctx, db, noteReq)
-	if err != nil {
-		return model.NoteResponse{}, err
-	}
-
-	res := model.NoteResponse{
-		ID:          note.ID,
-		Title:       note.Title,
-		Description: note.Description,
-		Check:       note.Check,
-		CreatedAt:   note.CreatedAt,
-		UpdatedAt:   note.UpdatedAt,
-	}
-
-	return res, nil
-}
-
 func (s *NoteServiceImpl) FindNotes(ctx context.Context) ([]model.NoteResponse, error) {
 	db := s.DB
 
@@ -93,6 +64,35 @@ func (s *NoteServiceImpl) FindNote(ctx context.Context, noteId string) (model.No
 		Check:       notes.Check,
 		CreatedAt:   notes.CreatedAt,
 		UpdatedAt:   notes.UpdatedAt,
+	}
+
+	return res, nil
+}
+
+func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRequest) (model.NoteResponse, error) {
+	db := s.DB
+
+	err := s.Validate.Struct(req)
+	exception.PanicIfNeeded(err)
+
+	noteReq := entity.Note{
+		Title:       req.Title,
+		Description: req.Description,
+		Check:       req.Check,
+	}
+
+	note, err := s.NoteRepository.CreateNote(ctx, db, noteReq)
+	if err != nil {
+		return model.NoteResponse{}, err
+	}
+
+	res := model.NoteResponse{
+		ID:          note.ID,
+		Title:       note.Title,
+		Description: note.Description,
+		Check:       note.Check,
+		CreatedAt:   note.CreatedAt,
+		UpdatedAt:   note.UpdatedAt,
 	}
 
 	return res, nil
