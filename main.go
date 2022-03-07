@@ -17,6 +17,7 @@ import (
 )
 
 const isoFormat = "2006-01-02T15:04:05.000-0700"
+const port = ":48080"
 
 func main() {
 	// setup config
@@ -32,7 +33,7 @@ func main() {
 	router := route.NoteRouter(noteController)
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    port,
 		Handler: router,
 	}
 
@@ -42,7 +43,7 @@ func main() {
 	}()
 
 	defer route.Stop(server)
-	log.Print("we're up and running")
+	log.Print("we're up and running on " + port)
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	log.Println(fmt.Sprint(<-ch), "in server")
