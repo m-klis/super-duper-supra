@@ -33,7 +33,7 @@ func (repo *noteRepositoryImpl) FindNote(ctx context.Context, db *sqlx.DB, noteI
 
 	err := db.GetContext(ctx, &note, sqlhelper.FindOne+string(noteId))
 	if err != nil {
-		return entity.Note{}, errors.New("failed take data")
+		return entity.Note{}, err
 	}
 
 	return note, nil
@@ -79,6 +79,15 @@ func (repo *noteRepositoryImpl) UpdateNote(ctx context.Context, db *sqlx.DB, not
 }
 
 func (repo *noteRepositoryImpl) DeleteNote(ctx context.Context, db *sqlx.DB, id string) error {
-	// db.ExecContext(ctx)
+	var note entity.Note
+	err := db.GetContext(ctx, &note, sqlhelper.FindOne+string(id))
+	if err != nil {
+		return err
+	}
+	_, err = db.QueryContext(ctx, sqlhelper.DeleteNote, id)
+	// fmt.Println(err)
+	if err != nil {
+		return err
+	}
 	return nil
 }

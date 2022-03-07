@@ -4,7 +4,9 @@ const (
 	FindAll = `SELECT 
 			   id, title, description, checked, created_at, updated_at 
 			   FROM 
-			   notes`
+			   notes
+			   ORDER BY
+			   id`
 
 	FindOne = `SELECT 
 			   id, title, description, checked, created_at, updated_at 
@@ -28,6 +30,11 @@ const (
 				  id=$4 
 				  RETURNING 
 				  created_at, updated_at`
+
+	DeleteNote = `DELETE FROM 
+				  notes 
+				  WHERE 
+				  id = $1`
 )
 
 // `UPDATE user SET first_name=:first, last_name=:last WHERE first_name = 'Bin'

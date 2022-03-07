@@ -127,5 +127,12 @@ func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRe
 }
 
 func (s *NoteServiceImpl) DeleteNote(ctx context.Context, id string) error {
+	db := s.DB
+	err := s.NoteRepository.DeleteNote(ctx, db, id)
+	// fmt.Println(id)
+	// var err = errors.New("FAILS")
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -2,11 +2,12 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 	"noteapp/exception"
 	"noteapp/model"
 	"noteapp/service"
+	"strconv"
 
 	"github.com/go-chi/chi"
 )
@@ -24,12 +25,10 @@ func NewNoteController(noteService service.NoteService) NoteController {
 func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteResponses, err := c.NoteService.FindNotes(r.Context())
-	exception.CheckError(err)
-
 	if err != nil {
 		webResponse.Code = http.StatusBadRequest
 		webResponse.Status = "Failed"
-		webResponse.Message = err
+		webResponse.Message = err.Error()
 	} else {
 		webResponse.Code = http.StatusOK
 		webResponse.Status = "OK"
@@ -46,16 +45,16 @@ func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")
 	if noteId == "" {
-		exception.CheckError(errors.New("noteId nil"))
 		webResponse.Code = http.StatusBadRequest
 		webResponse.Status = "Failed"
 		webResponse.Message = "check id again"
 	} else {
 		res, err := c.NoteService.FindNote(r.Context(), noteId)
+		fmt.Println(err)
 		if err != nil {
 			webResponse.Code = http.StatusBadRequest
 			webResponse.Status = "Failed"
-			webResponse.Message = err
+			webResponse.Message = err.Error()
 		} else {
 			webResponse.Code = http.StatusOK
 			webResponse.Status = "OK"
@@ -73,19 +72,18 @@ func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) 
 	decoder := json.NewDecoder(r.Body)
 	noteCreateRequest := model.NoteCreateRequest{}
 	err := decoder.Decode(&noteCreateRequest)
-	// exception.CheckError(err)
 	var webResponse = model.NewWebResponse()
 	if err != nil {
 		webResponse.Code = http.StatusNotAcceptable
 		webResponse.Status = "Failed"
-		webResponse.Message = err
+		webResponse.Message = err.Error()
 	} else {
 		noteResponse, err := c.NoteService.CreateNote(r.Context(), noteCreateRequest)
 		exception.CheckError(err)
 		if err != nil {
 			webResponse.Code = http.StatusBadRequest
 			webResponse.Status = "Failed"
-			webResponse.Message = err
+			webResponse.Message = err.Error()
 		} else {
 			webResponse.Code = http.StatusOK
 			webResponse.Status = "OK"
@@ -102,7 +100,7 @@ func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) 
 func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")
-	if noteId == "" {
+	if _, err := strconv.Atoi(noteId); err != nil {
 		webResponse.Code = http.StatusBadRequest
 		webResponse.Status = "Failed"
 		webResponse.Message = "check id again"
@@ -114,7 +112,7 @@ func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			webResponse.Code = http.StatusNotAcceptable
 			webResponse.Status = "Failed"
-			webResponse.Message = err
+			webResponse.Message = err.Error()
 		} else {
 			noteUpdateRequest.ID = noteId
 			noteResponse, err := c.NoteService.UpdateNote(r.Context(), noteUpdateRequest)
@@ -134,7 +132,7 @@ func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) 
 func (c *NoteControllerImpl) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")
-	if noteId == "" {
+	if _, err := strconv.Atoi(noteId); err != nil {
 		webResponse.Code = http.StatusBadRequest
 		webResponse.Status = "Failed"
 		webResponse.Message = "check id again"
@@ -143,7 +141,7 @@ func (c *NoteControllerImpl) DeleteNote(w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			webResponse.Code = http.StatusBadRequest
 			webResponse.Status = "Failed"
-			webResponse.Message = err
+			webResponse.Message = err.Error()
 		} else {
 			webResponse.Code = http.StatusOK
 			webResponse.Status = "OK"
