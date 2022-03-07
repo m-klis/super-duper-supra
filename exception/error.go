@@ -10,6 +10,6 @@ func PanicIfNeeded(err interface{}) {
 
 func CheckError(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }

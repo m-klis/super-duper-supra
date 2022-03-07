@@ -18,8 +18,7 @@ func NewPostgresDatabase(c Config) *sqlx.DB {
 		" sslmode=disable"
 	// fmt.Println(dsn)
 	db, err := sqlx.Connect("postgres", dsn)
-	exception.PanicIfNeeded(err)
-	defer db.Close()
+	exception.CheckError(err)
 	return db
 }
 

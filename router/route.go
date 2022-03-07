@@ -21,7 +21,7 @@ func NoteRouter(noteController controller.NoteController) http.Handler {
 		r.Post("/", noteController.CreateNote)
 		r.Route("/{noteid}", func(r chi.Router) {
 			r.Get("/", noteController.FindNote)
-			// r.Put("/", noteController.UpdateNote)
+			r.Put("/", noteController.UpdateNote)
 			// r.Delete("/", noteController.DeleteNote)
 		})
 	})

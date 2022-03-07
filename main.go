@@ -16,10 +16,13 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+const isoFormat = "2006-01-02T15:04:05.000-0700"
+
 func main() {
 	// setup config
 	configuration := config.New()
 	db := config.NewPostgresDatabase(configuration)
+	defer db.Close()
 	validate := validator.New()
 
 	noteRepository := repository.NewNoteRepository()

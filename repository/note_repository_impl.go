@@ -6,7 +6,6 @@ import (
 	"noteapp/entity"
 	"noteapp/exception"
 	"noteapp/repository/sqlhelper"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -18,28 +17,6 @@ func NewNoteRepository() NoteRepository {
 	return &noteRepositoryImpl{}
 }
 
-func (repo *noteRepositoryImpl) CreateNote(ctx context.Context, db *sqlx.DB, note entity.Note) (entity.Note, error) {
-	stmt, err := db.PrepareNamedContext(ctx, sqlhelper.CreateNote)
-	exception.PanicIfNeeded(err)
-
-	var id = entity.Note{
-		ID:        0,
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
-	}
-	err = stmt.Get(&id, note)
-	exception.PanicIfNeeded(err)
-
-	note.ID = id.ID
-	note.CreatedAt = id.CreatedAt
-	note.UpdatedAt = id.UpdatedAt
-
-	// _, err := db.NamedExecContext(ctx, sqlhelper.CreateNote, note)
-	// exception.PanicIfNeeded(err)
-
-	return note, nil
-}
-
 func (repo *noteRepositoryImpl) FindNotes(ctx context.Context, db *sqlx.DB) ([]entity.Note, error) {
 	var notes []entity.Note
 
@@ -47,7 +24,6 @@ func (repo *noteRepositoryImpl) FindNotes(ctx context.Context, db *sqlx.DB) ([]e
 	if err != nil {
 		return []entity.Note{}, errors.New("failed take data")
 	}
-	// exception.PanicIfNeeded(err)
 
 	return notes, nil
 }
@@ -59,7 +35,50 @@ func (repo *noteRepositoryImpl) FindNote(ctx context.Context, db *sqlx.DB, noteI
 	if err != nil {
 		return entity.Note{}, errors.New("failed take data")
 	}
-	// exception.PanicIfNeeded(err)
 
 	return note, nil
+}
+
+func (repo *noteRepositoryImpl) CreateNote(ctx context.Context, db *sqlx.DB, note entity.Note) (entity.Note, error) {
+	stmt, err := db.PrepareNamedContext(ctx, sqlhelper.CreateNote)
+	exception.CheckError(err)
+	if err != nil {
+		return entity.Note{}, err
+	}
+
+	var id = entity.Note{}
+
+	err = stmt.Get(&id, note)
+	if err != nil {
+		return entity.Note{}, err
+	}
+
+	note.ID = id.ID
+	note.CreatedAt = id.CreatedAt
+	note.UpdatedAt = id.UpdatedAt
+
+	return note, nil
+}
+
+func (repo *noteRepositoryImpl) UpdateNote(ctx context.Context, db *sqlx.DB, note entity.Note) (entity.Note, error) {
+	sqlRows, err := db.QueryContext(ctx, sqlhelper.UpdateNote,
+		note.Title, note.Description, note.Check, note.ID)
+	if err != nil {
+		return entity.Note{}, err
+	}
+	defer sqlRows.Close()
+
+	for sqlRows.Next() {
+		err = sqlRows.Scan(&note.CreatedAt, &note.UpdatedAt)
+		if err != nil {
+			return entity.Note{}, err
+		}
+	}
+
+	return note, nil
+}
+
+func (repo *noteRepositoryImpl) DeleteNote(ctx context.Context, db *sqlx.DB, id string) error {
+	// db.ExecContext(ctx)
+	return nil
 }

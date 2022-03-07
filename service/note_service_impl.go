@@ -6,6 +6,7 @@ import (
 	"noteapp/exception"
 	"noteapp/model"
 	"noteapp/repository"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
@@ -96,4 +97,35 @@ func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRe
 	}
 
 	return res, nil
+}
+
+func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRequest) (model.NoteResponse, error) {
+	db := s.DB
+	idNote, err := strconv.Atoi(req.ID)
+	if err != nil {
+		return model.NoteResponse{}, err
+	}
+	noteReq := entity.Note{
+		ID:          idNote,
+		Title:       req.Title,
+		Description: req.Description,
+		Check:       req.Check,
+	}
+	res, err := s.NoteRepository.UpdateNote(ctx, db, noteReq)
+	if err != nil {
+		return model.NoteResponse{}, err
+	}
+	var response = model.NoteResponse{
+		ID:          res.ID,
+		Title:       res.Title,
+		Description: res.Description,
+		Check:       res.Check,
+		CreatedAt:   res.CreatedAt,
+		UpdatedAt:   res.UpdatedAt,
+	}
+	return response, nil
+}
+
+func (s *NoteServiceImpl) DeleteNote(ctx context.Context, id string) error {
+	return nil
 }
