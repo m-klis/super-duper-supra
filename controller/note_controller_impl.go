@@ -151,9 +151,15 @@ func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) 
 			noteUpdateRequest.ID = noteId
 			noteResponse, err := c.NoteService.UpdateNote(r.Context(), noteUpdateRequest)
 			exception.CheckError(err)
-			webResponse.Code = http.StatusOK
-			webResponse.Status = "OK"
-			webResponse.Data = noteResponse
+			if err != nil {
+				webResponse.Code = http.StatusNotFound
+				webResponse.Status = "Failed"
+				webResponse.Message = err.Error()
+			} else {
+				webResponse.Code = http.StatusOK
+				webResponse.Status = "OK"
+				webResponse.Data = noteResponse
+			}
 		}
 	}
 

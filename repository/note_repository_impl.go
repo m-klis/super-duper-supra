@@ -6,6 +6,8 @@ import (
 	"noteapp/entity"
 	"noteapp/exception"
 	"noteapp/repository/sqlhelper"
+	"regexp"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -61,6 +63,17 @@ func (repo *noteRepositoryImpl) CreateNote(ctx context.Context, db *sqlx.DB, not
 }
 
 func (repo *noteRepositoryImpl) UpdateNote(ctx context.Context, db *sqlx.DB, note entity.Note) (entity.Note, error) {
+	itemId := strconv.Itoa(note.ID)
+	re, err := regexp.MatchString(`[0-9]`, itemId)
+	if err != nil || !re {
+		return entity.Note{}, err
+	}
+
+	err = db.GetContext(ctx, &note, sqlhelper.FindOne+itemId)
+	if err != nil {
+		return entity.Note{}, err
+	}
+
 	sqlRows, err := db.QueryContext(ctx, sqlhelper.UpdateNote,
 		note.Title, note.Description, note.Check, note.ID)
 	if err != nil {

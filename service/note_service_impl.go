@@ -7,6 +7,7 @@ import (
 	"noteapp/model"
 	"noteapp/repository"
 	"strconv"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
@@ -26,23 +27,23 @@ func NewNoteService(noteRepo repository.NoteRepository, DB *sqlx.DB, validate *v
 	} // here is the magic
 }
 
-func (s *NoteServiceImpl) FindNotes(ctx context.Context) ([]model.NoteResponse, error) {
+func (s *NoteServiceImpl) FindNotes(ctx context.Context) ([]model.NoteResponseDateString, error) {
 	db := s.DB
 
 	notes, err := s.NoteRepository.FindNotes(ctx, db)
 	if err != nil {
-		return []model.NoteResponse{}, err
+		return []model.NoteResponseDateString{}, err
 	}
 
-	var noteResponses []model.NoteResponse
+	var noteResponses []model.NoteResponseDateString
 	for _, note := range notes {
-		res := model.NoteResponse{
+		res := model.NoteResponseDateString{
 			ID:          note.ID,
 			Title:       note.Title,
 			Description: note.Description,
 			Check:       note.Check,
-			CreatedAt:   note.CreatedAt,
-			UpdatedAt:   note.UpdatedAt,
+			CreatedAt:   ConvertDatetoString(note.CreatedAt),
+			UpdatedAt:   ConvertDatetoString(note.UpdatedAt),
 		}
 		noteResponses = append(noteResponses, res)
 	}
@@ -50,27 +51,27 @@ func (s *NoteServiceImpl) FindNotes(ctx context.Context) ([]model.NoteResponse, 
 	return noteResponses, nil
 }
 
-func (s *NoteServiceImpl) FindNote(ctx context.Context, noteId string) (model.NoteResponse, error) {
+func (s *NoteServiceImpl) FindNote(ctx context.Context, noteId string) (model.NoteResponseDateString, error) {
 	db := s.DB
 
 	notes, err := s.NoteRepository.FindNote(ctx, db, noteId)
 	if err != nil {
-		return model.NoteResponse{}, err
+		return model.NoteResponseDateString{}, err
 	}
 
-	res := model.NoteResponse{
+	res := model.NoteResponseDateString{
 		ID:          notes.ID,
 		Title:       notes.Title,
 		Description: notes.Description,
 		Check:       notes.Check,
-		CreatedAt:   notes.CreatedAt,
-		UpdatedAt:   notes.UpdatedAt,
+		CreatedAt:   ConvertDatetoString(notes.CreatedAt),
+		UpdatedAt:   ConvertDatetoString(notes.UpdatedAt),
 	}
 
 	return res, nil
 }
 
-func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRequest) (model.NoteResponse, error) {
+func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRequest) (model.NoteResponseDateString, error) {
 	db := s.DB
 
 	err := s.Validate.Struct(req)
@@ -84,26 +85,26 @@ func (s *NoteServiceImpl) CreateNote(ctx context.Context, req model.NoteCreateRe
 
 	note, err := s.NoteRepository.CreateNote(ctx, db, noteReq)
 	if err != nil {
-		return model.NoteResponse{}, err
+		return model.NoteResponseDateString{}, err
 	}
 
-	res := model.NoteResponse{
+	res := model.NoteResponseDateString{
 		ID:          note.ID,
 		Title:       note.Title,
 		Description: note.Description,
 		Check:       note.Check,
-		CreatedAt:   note.CreatedAt,
-		UpdatedAt:   note.UpdatedAt,
+		CreatedAt:   ConvertDatetoString(note.CreatedAt),
+		UpdatedAt:   ConvertDatetoString(note.UpdatedAt),
 	}
 
 	return res, nil
 }
 
-func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRequest) (model.NoteResponse, error) {
+func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRequest) (model.NoteResponseDateString, error) {
 	db := s.DB
 	idNote, err := strconv.Atoi(req.ID)
 	if err != nil {
-		return model.NoteResponse{}, err
+		return model.NoteResponseDateString{}, err
 	}
 	noteReq := entity.Note{
 		ID:          idNote,
@@ -113,15 +114,15 @@ func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRe
 	}
 	res, err := s.NoteRepository.UpdateNote(ctx, db, noteReq)
 	if err != nil {
-		return model.NoteResponse{}, err
+		return model.NoteResponseDateString{}, err
 	}
-	var response = model.NoteResponse{
+	var response = model.NoteResponseDateString{
 		ID:          res.ID,
 		Title:       res.Title,
 		Description: res.Description,
 		Check:       res.Check,
-		CreatedAt:   res.CreatedAt,
-		UpdatedAt:   res.UpdatedAt,
+		CreatedAt:   ConvertDatetoString(res.CreatedAt),
+		UpdatedAt:   ConvertDatetoString(res.UpdatedAt),
 	}
 	return response, nil
 }
@@ -129,10 +130,41 @@ func (s *NoteServiceImpl) UpdateNote(ctx context.Context, req model.NoteUpdateRe
 func (s *NoteServiceImpl) DeleteNote(ctx context.Context, id string) error {
 	db := s.DB
 	err := s.NoteRepository.DeleteNote(ctx, db, id)
-	// fmt.Println(id)
-	// var err = errors.New("FAILS")
+
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func ConvertDatetoString(t time.Time) string {
+	month := t.Format("01")
+	var m string
+	switch month {
+	case "01":
+		m = "Januari"
+	case "02":
+		m = "Februari"
+	case "03":
+		m = "Maret"
+	case "04":
+		m = "April"
+	case "05":
+		m = "Mei"
+	case "06":
+		m = "Juni"
+	case "07":
+		m = "Juli"
+	case "08":
+		m = "Agustus"
+	case "09":
+		m = "September"
+	case "10":
+		m = "Oktober"
+	case "11":
+		m = "November"
+	case "12":
+		m = "Desember"
+	}
+	return t.Format("02 " + m + " 2006")
 }
