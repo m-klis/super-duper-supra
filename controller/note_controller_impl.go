@@ -22,6 +22,15 @@ func NewNoteController(noteService service.NoteService) NoteController {
 	}
 }
 
+// Show All Notes
+// @Summary      Show all data Notes
+// @Description  get notes
+// @Tags         notes
+// @Accept       json
+// @Produce      json
+// // @Param        page   path      int  true  "page"
+// // @Param        limit   path      int  true  "limit"
+// @Router       / [get]
 func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteResponses, err := c.NoteService.FindNotes(r.Context())
@@ -41,6 +50,14 @@ func (c *NoteControllerImpl) FindNotes(w http.ResponseWriter, r *http.Request) {
 	exception.CheckError(err)
 }
 
+// Show Single Note
+// @Summary      Show an Note
+// @Description  get data single note
+// @Tags         notes
+// @Accept       json
+// @Produce      json
+// @Param id path int true "Note ID"
+// @Router       /{id} [get]
 func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")
@@ -68,6 +85,14 @@ func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 	exception.CheckError(err)
 }
 
+// CreateNote
+// @Summary Create a new note
+// @Description Create a new note with the input paylod
+// @Tags notes
+// @Accept  json
+// @Produce  json
+// @Param note body model.NoteCreateRequest true "Create Note"
+// @Router / [post]
 func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	noteCreateRequest := model.NoteCreateRequest{}
@@ -97,6 +122,15 @@ func (c *NoteControllerImpl) CreateNote(w http.ResponseWriter, r *http.Request) 
 	exception.CheckError(err)
 }
 
+// UpdateNote
+// @Summary Update a note
+// @Description Update a note with the input paylod
+// @Tags notes
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Note ID"
+// @Param category body model.NoteUpdateRequest true "Update Noteas id as string value"
+// @Router /{id} [put]
 func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")
@@ -129,6 +163,14 @@ func (c *NoteControllerImpl) UpdateNote(w http.ResponseWriter, r *http.Request) 
 	exception.CheckError(err)
 }
 
+// DeleteCategory godoc
+// @Summary Delete note
+// @Description Delete note with id
+// @Tags notes
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Note ID"
+// @Router /{id} [delete]
 func (c *NoteControllerImpl) DeleteNote(w http.ResponseWriter, r *http.Request) {
 	var webResponse = model.NewWebResponse()
 	noteId := chi.URLParam(r, "noteid")

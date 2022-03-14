@@ -8,8 +8,11 @@ import (
 	"os"
 	"time"
 
+	_ "noteapp/docs"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func NoteRouter(noteController controller.NoteController) http.Handler {
@@ -25,6 +28,10 @@ func NoteRouter(noteController controller.NoteController) http.Handler {
 			r.Delete("/", noteController.DeleteNote)
 		})
 	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:48081/swagger/doc.json"), //The url pointing to API definition
+	))
 
 	return r
 }

@@ -19,6 +19,20 @@ import (
 const isoFormat = "2006-01-02T15:04:05.000-0700"
 const port = ":48081"
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:48081
+// @BasePath /note
 func main() {
 	// setup config
 	configuration := config.New()

@@ -1,0 +1,120 @@
+basePath: /note
+definitions:
+  model.NoteCreateRequest:
+    properties:
+      checked:
+        type: boolean
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  model.NoteUpdateRequest:
+    properties:
+      checked:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:48081
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: get notes
+      produces:
+      - application/json
+      responses: {}
+      summary: Show all data Notes
+      tags:
+      - notes
+    post:
+      consumes:
+      - application/json
+      description: Create a new note with the input paylod
+      parameters:
+      - description: Create Note
+        in: body
+        name: note
+        required: true
+        schema:
+          $ref: '#/definitions/model.NoteCreateRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new note
+      tags:
+      - notes
+  /{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete note with id
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete note
+      tags:
+      - notes
+    get:
+      consumes:
+      - application/json
+      description: get data single note
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Show an Note
+      tags:
+      - notes
+    put:
+      consumes:
+      - application/json
+      description: Update a note with the input paylod
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Noteas id as string value
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.NoteUpdateRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Update a note
+      tags:
+      - notes
+swagger: "2.0"
