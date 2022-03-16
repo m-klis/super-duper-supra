@@ -11,6 +11,7 @@ import (
 	"noteapp/service"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	"github.com/go-playground/validator/v10"
@@ -33,7 +34,13 @@ const port = ":48081"
 
 // @host localhost:48081
 // @BasePath /note
+
+// // @securityDefinitions.apikey BearerAuth
+// // @in header
+// // @name Authorization
+// // @Security BearerAuth
 func main() {
+	runtime.GOMAXPROCS(2)
 	// setup config
 	configuration := config.New()
 	db := config.NewPostgresDatabase(configuration)

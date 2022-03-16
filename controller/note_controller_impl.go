@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"noteapp/exception"
 	"noteapp/model"
@@ -67,7 +66,6 @@ func (c *NoteControllerImpl) FindNote(w http.ResponseWriter, r *http.Request) {
 		webResponse.Message = "check id again"
 	} else {
 		res, err := c.NoteService.FindNote(r.Context(), noteId)
-		fmt.Println(err)
 		if err != nil {
 			webResponse.Code = http.StatusBadRequest
 			webResponse.Status = "Failed"
