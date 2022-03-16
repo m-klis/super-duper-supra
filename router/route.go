@@ -11,12 +11,13 @@ import (
 	_ "noteapp/docs"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func NoteRouter(noteController controller.NoteController) http.Handler {
 	r := chi.NewRouter()
-	// r.Use(middleware.Logger)
+	r.Use(middleware.Logger)
 
 	r.Route("/note", func(r chi.Router) {
 		r.Get("/", noteController.FindNotes)
